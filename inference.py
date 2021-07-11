@@ -1,12 +1,10 @@
 import argparse
 import os
 import json
-
 import torch
 from torch.utils.data import DataLoader, SequentialSampler
 from tqdm import tqdm
 from transformers import BertTokenizer
-
 from data_utils import (WOSDataset, get_examples_from_dialogues)
 from model import TRADE
 from preprocessor import TRADEPreprocessor
@@ -29,13 +27,11 @@ def inference(model, eval_loader, processor, device):
         input_ids, segment_ids, input_masks, gating_ids, target_ids, guids = [
             b.to(device) if not isinstance(b, list) else b for b in batch
         ]
-
         with torch.no_grad():
             o, g = model(input_ids, segment_ids, input_masks, 9)
 
             _, generated_ids = o.max(-1)
             _, gated_ids = g.max(-1)
-
         for guid, gate, gen in zip(guids, gated_ids.tolist(), generated_ids.tolist()):
             prediction = processor.recover_state(gate, gen)
             prediction = postprocess_state(prediction)
@@ -45,15 +41,21 @@ def inference(model, eval_loader, processor, device):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", type=str, default=None)
-    parser.add_argument("--model_dir", type=str, default=None)
-    parser.add_argument("--output_dir", type=str, default=None)
-    parser.add_argument("--eval_batch_size", type=int, default=32)
+    parser.add_argument(
+        "--data_dir", type=str, default="data/eval_dataset"
+    )
+    parser.add_argument(
+        "--checkpoint", type=int, default=200
+    )
+    parser.add_argument(
+        "--output_dir", type=str, default="results"
+    )
+    parser.add_argument(
+        "--eval_batch_size", type=int, default=32
+    )
     args = parser.parse_args()
-    args.data_dir = os.environ['SM_CHANNEL_EVAL']
-    args.model_dir = os.environ['SM_CHANNEL_MODEL']
-    args.output_dir = os.environ['SM_OUTPUT_DATA_DIR']
-    
+    args.model_dir = args.output_dir + "/model-{args.checkpoint}.bin"
+
     model_dir_path = os.path.dirname(args.model_dir)
     eval_data = json.load(open(f"{args.data_dir}/eval_dials.json", "r"))
     config = json.load(open(f"{model_dir_path}/exp_config.json", "r"))
@@ -62,7 +64,6 @@ if __name__ == "__main__":
 
     tokenizer = BertTokenizer.from_pretrained(config.model_name_or_path)
     processor = TRADEPreprocessor(slot_meta, tokenizer)
-
     eval_examples = get_examples_from_dialogues(
         eval_data, user_first=False, dialogue_level=False
     )
@@ -84,20 +85,17 @@ if __name__ == "__main__":
         tokenized_slot_meta.append(
             tokenizer.encode(slot.replace("-", " "), add_special_tokens=False)
         )
-
     model = TRADE(config, tokenized_slot_meta)
     ckpt = torch.load(args.model_dir, map_location="cpu")
     model.load_state_dict(ckpt)
     model.to(device)
     print("Model is loaded")
 
-    predictions = inference(model, eval_loader, processor, device)
-    
+    prediction = inference(model, eval_loader, processor, device)
     if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
-    
     json.dump(
-        predictions,
+        prediction,
         open(f"{args.output_dir}/predictions.csv", "w"),
         indent=2,
         ensure_ascii=False,

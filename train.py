@@ -50,7 +50,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_name_or_path", type=str, default="monologg/koelectra-base-v3-discriminator"
     )
-
     # Model Specific Argument
     parser.add_argument(
         "--hidden_size", type=int, default=768
