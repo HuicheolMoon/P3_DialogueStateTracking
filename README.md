@@ -31,7 +31,7 @@ Wizard of Seoul은 아래와 같은 형식을 가지는 대화 데이터의 리�
 - test dataset: 1000개의 대화 (label 미포함)
 
 ### Evaluation
-본 프로젝트에서는 `Joint Goal Accuracy`와 `Slot Accuracy`, 그리고 `Slot F1 Score`의 세 가지 척도로 모델을 평가했습니다. `Joint Goal Accuracy`는 추론된 `Dialogue State`와 실제 `Dialogue State`가 완벽히 일치하는지를 측정합니다. `Slot Accuracy`와 `Slot F1 Score`는 턴 레벨의 측정이 아닌 그 원소인 (Slot, Value) pair에 대한 Accuracy를 측정합니다. `Joint Goal Accuracy`가 `Slot Accuracy`와 `Slot F1 Score` 보다 더 우선되는 기준입니다.
+본 프로젝트에서는 `Joint Goal Accuracy`와 `Slot Accuracy`, 그리고 `Slot F1 Score`의 세 가지 척도로 모델을 평가했습니다. `Joint Goal Accuracy`는 추론된 `Dialogue State`와 실제 `Dialogue State`가 완벽히 일치하는지를 측정합니다. `Slot Accuracy`와 `Slot F1 Score`는 턴 레벨의 측정이 아닌 그 원소인 (Slot, Value) pair에 대한 Accuracy를 측정합니다. `Joint Goal Accuracy`가 `Slot Accuracy`와 `Slot F1 Score` 보다 우선되는 기준입니다.
 
 ## Training Details
 | Model | Batch Size | epochs | LR | Train Time |
