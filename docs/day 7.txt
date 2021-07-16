@@ -1,0 +1,6 @@
+2018년부터 시작된 task가 DST임.
+
+trade 모델은 최소 30epoch 이상 해야함
+
+
+SOM-DST

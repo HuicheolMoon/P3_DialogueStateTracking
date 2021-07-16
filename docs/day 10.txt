@@ -1,0 +1,8 @@
+* 추가 시도
+ - Hidden layer dropout을 default 0.1에서 0.5로 증가시켜서 0.0472의 성능 향상을 얻음.
+ - Task-adaptive pretraining을 적용하여 0.0353의 성능 향상을 얻음.
+ - dropout을 default 0.1에서 0.5로 증가시켜서 0.0072의 성능 향상을 얻음.
+
+* 시도했으나 잘 되지 않았던 것들
+ - batch_size가 8보다 작은 경우에 오히려 성능이 떨어짐.
+ - Learning rate를 낮추면 약간의 성능 향상이 있었지만 크게 낮추면 학습이 오래 걸려서 원활한 대회 진행이 불가능했음.

@@ -1,0 +1,16 @@
+[강의 3]
+온톨로지 = 기정의된 지식의 표현
+
+encoder : Dt / Bt -> Vt
+scoring module : Vt -> Pt
+
+
+SUMBT
+encoder : Dialogue Context Encoder(trainable, Current turn encoding) + Slot-Value Encoder(Freeze, S-V encoding)
+scoring :
+
+
+[강의 4]
+
+quiz 1) 0 3 1
+quiz 2) J (tracking하는 Slot의 개수)
